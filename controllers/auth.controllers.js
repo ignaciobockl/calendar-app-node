@@ -1,19 +1,39 @@
 const { response, request } = require('express');
 
+const User = require('../models/User.model');
 
-const createUser = ( req = request, res = response ) => {
 
-    const { name, email, password } = req.body;
+const createUser = async( req = request, res = response ) => {
 
-    return res.status(201).json({
-        ok: true,
-        msg: 'register',
-        user: { 
-            name,
-            email, 
-            password
-        }
-    });
+    const { email, password } = req.body;
+
+    let userEmail = await User.findOne({ email });
+    if ( userEmail ) { 
+        return res.status(400).json({
+            ok: false,
+            msg: `The entered email: ${ email } is already registered in the database.`
+        });
+    }
+
+    try {
+
+        const user = new User( req.body );
+
+        await user.save();
+        
+        return res.status(201).json({
+            ok: true,
+            msg: 'register',
+            user
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error when trying to create a new user, check logs.',
+            error
+        });
+    }
 }
 
 const getUser = ( req = request, res = response ) => {
