@@ -42,18 +42,34 @@ const getUser = ( req = request, res = response ) => {
 
 }
 
-const loginUser = ( req = request, res = response ) => {
+const loginUser = async( req = request, res = response ) => {
 
     const { email, password } = req.body;
 
-    return res.json({
-        ok: true,
-        msg: 'login',
-        user: { 
-            email, 
-            password
-        }
-    });
+    const user = await User.findOne({ email });
+
+    try {
+
+        // validate password
+        const validPass = bcrypt.compareSync( password, user.password );
+        if ( !validPass ) return res.status(400).json({ ok: false, msg: 'The entered password is incorrect.' });
+
+        return res.json({
+            ok: true,
+            msg: 'login ok',
+            user: {
+                uid: user._id,
+                name: user.name
+            }
+        });
+        
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'User login error, check logs.',
+            error
+        });
+    }
 
 }
 
