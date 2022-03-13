@@ -3,6 +3,9 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/User.model');
 
+const { generateJWT } = require('../helpers/jwt');
+
+
 
 const createUser = async( req = request, res = response ) => {
 
@@ -54,13 +57,17 @@ const loginUser = async( req = request, res = response ) => {
         const validPass = bcrypt.compareSync( password, user.password );
         if ( !validPass ) return res.status(400).json({ ok: false, msg: 'The entered password is incorrect.' });
 
+        // generate jwt
+        const token = await generateJWT( user._id, user.name );
+
         return res.json({
             ok: true,
             msg: 'login ok',
             user: {
                 uid: user._id,
                 name: user.name
-            }
+            },
+            token
         });
         
     } catch (error) {
@@ -81,6 +88,7 @@ const revalidateToken = ( req = request, res = response ) => {
     })
 
 }
+
 
 
 module.exports = {
