@@ -24,6 +24,7 @@ app.use( express.json() );
 
 // Routes
 app.use( '/api/auth', require('./routes/auth.routes') );
+app.use( '/api/event', require('./routes/events.routes') );
 
 app.listen( port, () => {
     console.log( 'Server run on port: ', port );
