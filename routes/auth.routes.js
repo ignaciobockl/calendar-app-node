@@ -12,6 +12,8 @@ const { emailExist, emailRegistered, isValidString } = require('../helpers/datab
 
 const { validateFields } = require('../middlewares/validateFields');
 
+const { validateJWT } = require('../middlewares/validateJWT');
+
 
 
 const router = Router();
@@ -37,7 +39,7 @@ router.post('/new', [
     validateFields
 ], createUser);
 
-router.get('/renew', revalidateToken);
+router.get('/renew', validateJWT, revalidateToken);
 
 
 

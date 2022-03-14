@@ -80,12 +80,28 @@ const loginUser = async( req = request, res = response ) => {
 
 }
 
-const revalidateToken = ( req = request, res = response ) => {
+const revalidateToken = async( req = request, res = response ) => {
 
-    return res.json({
-        ok: true,
-        msg: 'revalidateToken'
-    })
+    const { uid, name } = req;
+
+    try {
+        
+        // generate a new jwt
+        const token = await generateJWT( uid, name );
+
+        return res.json({
+            ok: true,
+            msg: 'Revalidated token.',
+            user: {
+                uid,
+                name
+            },
+            token
+        });
+
+    } catch (error) {
+        return res.status(400).json({ ok: false, msg: 'Error revalidating token, check logs.', error });
+    }
 
 }
 
