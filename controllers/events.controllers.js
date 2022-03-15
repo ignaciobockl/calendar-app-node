@@ -45,11 +45,11 @@ const deleteEvent = async( req = request, res = response ) => {
             });
         }
 
-        // check if the user that is going to modify is the same that created the event
-        if ( event.user.toString() !== uid ) {
-            res.status(401).json({
+        // check if the user that is going to delete is the same that created the event
+        if ( event.user.toString() !== uid.toString() ) {
+            return res.status(401).json({
                 ok: false,
-                msg: 'User does not have privilege to deletee this event.'
+                msg: 'User does not have privilege to delete this event.'
             });
         }
 
@@ -103,8 +103,8 @@ const updateEvent = async( req = request, res = response ) => {
         }
 
         // check if the user that is going to modify is the same that created the event
-        if ( event.user.toString() !== uid ) {
-            res.status(401).json({
+        if ( event.user.toString() !== uid.toString() ) {
+            return res.status(401).json({
                 ok: false,
                 msg: 'User does not have privilege to update this event.'
             });
